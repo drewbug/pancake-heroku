@@ -1,0 +1,77 @@
+--- installer/controllers/wizard.php
++++ installer/controllers/wizard.php
+@@ -72,42 +72,38 @@ class Wizard extends CI_Controller {
+ 		{
+ 			redirect('wizard/step1');
+ 		}
++		$DATABASE_URL		= parse_url(getenv("DATABASE_URL"));
+-		$data['hostname']	= $this->input->post('hostname');
++		$data['hostname']	= $DATABASE_URL["host"];
+-		$data['database']	= $this->input->post('database');
++		$data['database']	= substr($DATABASE_URL["path"],1);
+-		$data['dbprefix']	= $this->input->post('dbprefix') ? $this->input->post('dbprefix') : 'pancake_';
++		$data['dbprefix']	= 'pancake_';
+-		$data['username']	= $this->input->post('username');
++		$data['username']	= $DATABASE_URL["user"];
+-		$data['password']	= $this->input->post('password');
++		$data['password']	= $DATABASE_URL["pass"];
+-		$data['port']		= $this->input->post('port');
++		$data['port']		= '3306';
+-		if ($_POST)
+-		{
+-			$data['port'] = ( ! $data['port']) ? '3306' : $data['port'];
+-
+-			$link = @mysql_connect($data['hostname'].':'.$data['port'], $data['username'], $data['password'], TRUE);
+-
+-            if ($link)
+-			{
+-                // If the database is not there create it
+-                mysql_query('CREATE DATABASE IF NOT EXISTS '.$data['database'], $link);
+-            }
+-			
+-			if ($link AND @mysql_select_db($data['database'], $link))
+-			{
+-				$this->session->set_userdata('hostname', $data['hostname']);
+-				$this->session->set_userdata('username', $data['username']);
+-				$this->session->set_userdata('database', $data['database']);
+-				$this->session->set_userdata('dbprefix', $data['dbprefix']);
+-				$this->session->set_userdata('username', $data['username']);
+-				$this->session->set_userdata('password', $data['password']);
+-				$this->session->set_userdata('port', $data['port']);
+-				$this->session->set_userdata('last_step', '2');
+-				redirect('wizard/step3');
+-			}
+-			else
+-			{
+-				$data['error'] = 'Database Error: '.mysql_error();
+-			}
+-		}
++		
++		$link = @mysql_connect($data['hostname'].':'.$data['port'], $data['username'], $data['password'], TRUE);
++		
++		if ($link)
++		{
++			// If the database is not there create it
++			mysql_query('CREATE DATABASE IF NOT EXISTS '.$data['database'], $link);
++		}
++		
++		if ($link AND @mysql_select_db($data['database'], $link))
++		{
++			$this->session->set_userdata('hostname', $data['hostname']);
++			$this->session->set_userdata('username', $data['username']);
++			$this->session->set_userdata('database', $data['database']);
++			$this->session->set_userdata('dbprefix', $data['dbprefix']);
++			$this->session->set_userdata('username', $data['username']);
++			$this->session->set_userdata('password', $data['password']);
++			$this->session->set_userdata('port', $data['port']);
++			$this->session->set_userdata('last_step', '2');
++			redirect('wizard/step3');
++		}
++		else
++		{
++			$data['error'] = 'Database Error: '.mysql_error();
++		}
+-		$this->_output_step('steps/step2', $data);
+ 	}
+ 
+ 	public function step3()
