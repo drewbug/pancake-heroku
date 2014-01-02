@@ -45,7 +45,7 @@ Heroku recommends using the `DATABASE_URL` config variable to store the location
 
 I've created a patch for the Pancake installation wizard that enables you to skip Step 2 (database connection settings):
 
-    $ wget https://raw.github.com/drewbug/heroku-pancake/master/heroku-pancake.patch
+    $ wget https://raw.github.com/onheroku/pancake/master/heroku-pancake.patch
     $ patch -p0 < heroku-pancake.patch
     $ rm heroku-pancake.patch
 
@@ -67,7 +67,7 @@ Upon completion of the installation wizard, Pancake will write to `system/pancak
 
 Luckily, the `database.php` file is in, well, PHP, so we can use the magic of programming to solve all our problems. In fact, dear reader, I already did! This should get you up and running:
 
-    $ wget https://raw.github.com/drewbug/heroku-pancake/master/database.php
+    $ wget https://raw.github.com/onheroku/pancake/master/database.php
     $ mv database.php system/pancake/config/database.php
     $ git add system/pancake/config/database.php
     $ git commit -m "Database configuration"
